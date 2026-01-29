@@ -90,3 +90,73 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
   }
 }
+
+export async function PATCH(request: NextRequest) {
+  // Verify API key
+  const authHeader = request.headers.get('authorization')
+  const apiKey = authHeader?.replace('Bearer ', '')
+
+  if (!apiKey || apiKey !== process.env.BEEBOT_API_KEY) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
+    const body = await request.json()
+    const { id, ...updates } = body
+
+    if (!id) {
+      return NextResponse.json({ error: 'Job ID required' }, { status: 400 })
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from('jobs')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Update error:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json({ success: true, job: data })
+  } catch (error) {
+    console.error('API error:', error)
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  // Verify API key
+  const authHeader = request.headers.get('authorization')
+  const apiKey = authHeader?.replace('Bearer ', '')
+
+  if (!apiKey || apiKey !== process.env.BEEBOT_API_KEY) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json({ error: 'Job ID required' }, { status: 400 })
+    }
+
+    const { error } = await supabaseAdmin
+      .from('jobs')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('Delete error:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('API error:', error)
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+  }
+}
