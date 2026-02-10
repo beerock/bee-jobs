@@ -32,10 +32,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-bee-50 to-bee-100">
-      <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-md mx-4 sm:mx-0">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-bee-50 to-bee-100 px-4 safe-bottom">
+      <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-bee-600 mb-2">🐝 bee-jobs</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-bee-600 mb-2">🐝 bee-jobs</h1>
           <p className="text-gray-600">Your personal job tracker</p>
         </div>
 
@@ -47,7 +47,7 @@ export default function LoginPage() {
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
               Email
             </label>
             <input
@@ -56,13 +56,14 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none transition text-base"
+              autoComplete="email"
+              className="w-full px-4 py-3 sm:py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none transition text-base"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
               Password
             </label>
             <input
@@ -71,7 +72,8 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none transition text-base"
+              autoComplete="current-password"
+              className="w-full px-4 py-3 sm:py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none transition text-base"
               placeholder="••••••••"
             />
           </div>
@@ -79,7 +81,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-bee-500 hover:bg-bee-600 text-white font-semibold py-3 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-bee-500 hover:bg-bee-600 active:bg-bee-700 text-white font-semibold py-3.5 sm:py-3 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] text-base"
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>

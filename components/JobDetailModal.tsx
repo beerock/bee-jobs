@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Job, STATUS_CONFIG, STATUSES } from '@/lib/types'
 import { X, ExternalLink, Building2, MapPin, DollarSign, Star, StarOff, Trash2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -17,6 +17,13 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
   const [saving, setSaving] = useState(false)
   const supabase = createClient()
   const router = useRouter()
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    const orig = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = orig }
+  }, [])
 
   const handleUpdate = async (updates: Partial<Job>) => {
     setSaving(true)
@@ -46,32 +53,45 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 sm:p-4">
-      <div className="bg-white rounded-t-2xl sm:rounded-xl max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b sticky top-0 bg-white rounded-t-2xl sm:rounded-t-xl z-10">
+    <div 
+      className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 sm:p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
+    >
+      <div className="bg-white rounded-t-2xl sm:rounded-xl max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto touch-scroll safe-bottom">
+        {/* Drag handle for mobile */}
+        <div className="flex justify-center pt-2 pb-0 sm:hidden">
+          <div className="w-10 h-1 bg-gray-300 rounded-full" />
+        </div>
+
+        <div className="flex items-center justify-between p-4 border-b sticky top-0 bg-white sm:rounded-t-xl z-10">
           <h2 className="text-base sm:text-lg font-semibold truncate pr-4">{job.role}</h2>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5">
             <button
               onClick={handleDelete}
-              className="text-red-400 hover:text-red-600 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center"
+              className="text-red-400 hover:text-red-600 active:text-red-700 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg"
               title="Delete job"
             >
               <Trash2 className="w-5 h-5" />
             </button>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center">
+            <button 
+              onClick={onClose} 
+              className="text-gray-400 hover:text-gray-600 active:text-gray-700 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg"
+            >
               <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        <div className="p-4 space-y-6">
+        <div className="p-4 space-y-5">
           {/* Company Info */}
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Building2 className="w-5 h-5 text-gray-400" />
+              <Building2 className="w-5 h-5 text-gray-400 flex-shrink-0" />
               <span className="font-semibold text-lg">{job.company}</span>
               {job.company_stage && (
-                <span className="text-sm bg-gray-100 px-2 py-0.5 rounded">
+                <span className="text-sm bg-gray-100 px-2 py-0.5 rounded flex-shrink-0">
                   {job.company_stage}
                 </span>
               )}
@@ -82,17 +102,17 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
           </div>
 
           {/* Quick Info */}
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-3">
             {job.location && (
-              <div className="flex items-center gap-1 text-gray-600">
-                <MapPin className="w-4 h-4" />
-                <span>{job.location}</span>
+              <div className="flex items-center gap-1.5 text-gray-600">
+                <MapPin className="w-4 h-4 flex-shrink-0" />
+                <span className="text-sm">{job.location}</span>
               </div>
             )}
             {job.salary_range && (
-              <div className="flex items-center gap-1 text-green-600">
-                <DollarSign className="w-4 h-4" />
-                <span>{job.salary_range}</span>
+              <div className="flex items-center gap-1.5 text-green-600">
+                <DollarSign className="w-4 h-4 flex-shrink-0" />
+                <span className="text-sm">{job.salary_range}</span>
               </div>
             )}
           </div>
@@ -104,7 +124,7 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
                 href={job.job_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-bee-600 hover:text-bee-700 text-sm px-3 py-2 bg-bee-50 rounded-lg min-h-[44px]"
+                className="flex items-center gap-1.5 text-bee-600 hover:text-bee-700 active:text-bee-800 text-sm px-3 py-2.5 bg-bee-50 active:bg-bee-100 rounded-lg min-h-[44px] transition"
               >
                 <ExternalLink className="w-4 h-4" />
                 Job Posting
@@ -115,7 +135,7 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
                 href={job.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-bee-600 hover:text-bee-700 text-sm px-3 py-2 bg-bee-50 rounded-lg min-h-[44px]"
+                className="flex items-center gap-1.5 text-bee-600 hover:text-bee-700 active:text-bee-800 text-sm px-3 py-2.5 bg-bee-50 active:bg-bee-100 rounded-lg min-h-[44px] transition"
               >
                 <ExternalLink className="w-4 h-4" />
                 Company Website
@@ -126,7 +146,7 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
                 href={job.careers_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-bee-600 hover:text-bee-700 text-sm px-3 py-2 bg-bee-50 rounded-lg min-h-[44px]"
+                className="flex items-center gap-1.5 text-bee-600 hover:text-bee-700 active:text-bee-800 text-sm px-3 py-2.5 bg-bee-50 active:bg-bee-100 rounded-lg min-h-[44px] transition"
               >
                 <ExternalLink className="w-4 h-4" />
                 Careers Page
@@ -137,8 +157,8 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
           {/* Why Good Fit */}
           {job.why_good_fit && (
             <div className="bg-bee-50 rounded-lg p-4">
-              <h3 className="font-medium text-bee-800 mb-1">💡 Why it's a good fit</h3>
-              <p className="text-bee-700 text-sm">{job.why_good_fit}</p>
+              <h3 className="font-medium text-bee-800 mb-1">💡 Why it&apos;s a good fit</h3>
+              <p className="text-bee-700 text-sm leading-relaxed">{job.why_good_fit}</p>
             </div>
           )}
 
@@ -155,10 +175,10 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
                       ? new Date().toISOString() 
                       : job.applied_at
                   })}
-                  className={`px-3 py-2.5 sm:py-1.5 rounded-lg text-sm font-medium transition min-h-[44px] ${
+                  className={`px-3.5 py-2.5 rounded-lg text-sm font-medium transition min-h-[44px] ${
                     job.status === status
                       ? STATUS_CONFIG[status].color + ' ring-2 ring-offset-1 ring-gray-300'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 active:bg-gray-300'
                   }`}
                 >
                   {STATUS_CONFIG[status].emoji} {STATUS_CONFIG[status].label}
@@ -172,12 +192,12 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
             <h3 className="font-medium text-gray-700 mb-2">Interest Level</h3>
             <button
               onClick={toggleInterested}
-              className={`flex items-center gap-2 px-4 py-3 sm:py-2 rounded-lg transition min-h-[44px] ${
+              className={`flex items-center gap-2 px-4 py-3 rounded-lg transition min-h-[44px] ${
                 job.interested === true
                   ? 'bg-bee-100 text-bee-700'
                   : job.interested === false
                   ? 'bg-gray-100 text-gray-500'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 active:bg-gray-300'
               }`}
             >
               {job.interested === true ? (
@@ -212,12 +232,12 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
               }}
               rows={4}
               placeholder="Add your notes here..."
-              className="w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none resize-none text-base sm:text-sm"
+              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none resize-none text-base leading-relaxed"
             />
           </div>
 
           {/* Metadata */}
-          <div className="text-sm text-gray-400 pt-2 border-t">
+          <div className="text-sm text-gray-400 pt-2 border-t space-y-1">
             <p>Added: {new Date(job.created_at).toLocaleDateString()}</p>
             {job.applied_at && (
               <p>Applied: {new Date(job.applied_at).toLocaleDateString()}</p>
