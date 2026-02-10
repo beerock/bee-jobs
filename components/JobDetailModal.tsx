@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Job, STATUS_CONFIG, STATUSES } from '@/lib/types'
 import { X, ExternalLink, Building2, MapPin, DollarSign, Star, StarOff, Trash2 } from 'lucide-react'
+import { sanitizeUrl } from '@/lib/url'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
@@ -15,7 +16,7 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
   const [job, setJob] = useState(initialJob)
   const [notes, setNotes] = useState(job.notes || '')
   const [saving, setSaving] = useState(false)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const router = useRouter()
 
   // Prevent body scroll when modal is open
@@ -27,13 +28,17 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
 
   const handleUpdate = async (updates: Partial<Job>) => {
     setSaving(true)
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('jobs')
       .update(updates)
       .eq('id', job.id)
+      .select()
+      .single()
 
-    if (!error) {
-      setJob(prev => ({ ...prev, ...updates }))
+    if (error) {
+      alert('Failed to update job. Please try again.')
+    } else if (data) {
+      setJob(data as Job)
       router.refresh()
     }
     setSaving(false)
@@ -42,7 +47,11 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this job?')) return
 
-    await supabase.from('jobs').delete().eq('id', job.id)
+    const { error } = await supabase.from('jobs').delete().eq('id', job.id)
+    if (error) {
+      alert('Failed to delete job. Please try again.')
+      return
+    }
     router.refresh()
     onClose()
   }
@@ -119,9 +128,9 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
 
           {/* Links */}
           <div className="flex flex-wrap gap-2">
-            {job.job_url && (
+            {sanitizeUrl(job.job_url) && (
               <a
-                href={job.job_url}
+                href={sanitizeUrl(job.job_url)!}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 text-bee-600 hover:text-bee-700 active:text-bee-800 text-sm px-3 py-2.5 bg-bee-50 active:bg-bee-100 rounded-lg min-h-[44px] transition"
@@ -130,9 +139,9 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
                 Job Posting
               </a>
             )}
-            {job.website && (
+            {sanitizeUrl(job.website) && (
               <a
-                href={job.website}
+                href={sanitizeUrl(job.website)!}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 text-bee-600 hover:text-bee-700 active:text-bee-800 text-sm px-3 py-2.5 bg-bee-50 active:bg-bee-100 rounded-lg min-h-[44px] transition"
@@ -141,9 +150,9 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
                 Company Website
               </a>
             )}
-            {job.careers_url && (
+            {sanitizeUrl(job.careers_url) && (
               <a
-                href={job.careers_url}
+                href={sanitizeUrl(job.careers_url)!}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 text-bee-600 hover:text-bee-700 active:text-bee-800 text-sm px-3 py-2.5 bg-bee-50 active:bg-bee-100 rounded-lg min-h-[44px] transition"

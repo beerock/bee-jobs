@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useMemo } from 'react'
 import { Job, JobStatus, STATUSES, STATUS_CONFIG } from '@/lib/types'
 import { JobCard } from './JobCard'
 import { createClient } from '@/lib/supabase/client'
@@ -15,7 +15,7 @@ export function JobBoard({ initialJobs }: JobBoardProps) {
   const [draggedJob, setDraggedJob] = useState<Job | null>(null)
   const [activeTab, setActiveTab] = useState<JobStatus>('saved')
   const touchStartX = useRef<number | null>(null)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const router = useRouter()
 
   const jobsByStatus = STATUSES.reduce((acc, status) => {

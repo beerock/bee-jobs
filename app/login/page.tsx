@@ -1,8 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+
+function getAuthErrorMessage(message: string): string {
+  if (message.includes('Invalid login credentials')) return 'Invalid email or password.'
+  if (message.includes('Email not confirmed')) return 'Please verify your email address.'
+  return 'Unable to sign in. Please try again.'
+}
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -10,7 +16,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,7 +29,7 @@ export default function LoginPage() {
     })
 
     if (error) {
-      setError(error.message)
+      setError(getAuthErrorMessage(error.message))
       setLoading(false)
     } else {
       router.push('/dashboard')

@@ -1,6 +1,7 @@
 'use client'
 
 import { Job } from '@/lib/types'
+import { sanitizeUrl } from '@/lib/url'
 import { Building2, MapPin, DollarSign, ExternalLink, Star, StarOff } from 'lucide-react'
 import { useState } from 'react'
 import { JobDetailModal } from './JobDetailModal'
@@ -71,9 +72,9 @@ export function JobCard({ job, onDragStart, isDragging }: JobCardProps) {
           <span className="text-xs text-gray-400">
             {new Date(job.created_at).toLocaleDateString()}
           </span>
-          {job.job_url && (
+          {sanitizeUrl(job.job_url) && (
             <a
-              href={job.job_url}
+              href={sanitizeUrl(job.job_url)!}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}

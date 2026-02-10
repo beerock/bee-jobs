@@ -39,7 +39,8 @@ html, body {
 }
 
 /* Safe area padding for bottom-sheet modals on notched devices */
-.pb-safe {
+.pb-safe,
+.safe-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
