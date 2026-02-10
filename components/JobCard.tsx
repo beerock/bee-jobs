@@ -29,7 +29,7 @@ export function JobCard({ job, onDragStart, isDragging }: JobCardProps) {
       >
         <div className="flex items-start justify-between mb-2 gap-2">
           <h3 className="font-semibold text-gray-900 text-[15px] sm:text-base leading-snug line-clamp-2">{job.role}</h3>
-          {job.interested !== null && (
+          {job.interested != null && (
             job.interested ? (
               <Star className="w-5 h-5 text-bee-500 fill-bee-500 flex-shrink-0 mt-0.5" />
             ) : (

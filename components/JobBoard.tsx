@@ -38,8 +38,8 @@ export function JobBoard({ initialJobs }: JobBoardProps) {
     }
 
     // Optimistic update
-    setJobs(prev => prev.map(j => 
-      j.id === draggedJob.id ? { ...j, status } : j
+    setJobs(prev => prev.map(j =>
+      j.id === draggedJob.id ? { ...j, status, updated_at: new Date().toISOString() } : j
     ))
 
     // Update in database
