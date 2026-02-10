@@ -6,7 +6,6 @@
 
 **Tech Stack:** Next.js 16, TypeScript 5.7, Tailwind CSS 3, Supabase (Auth + Postgres + RLS via @supabase/ssr), lucide-react (icons), Vercel
 
-> **Note:** `@dnd-kit/core`, `@dnd-kit/sortable`, and `date-fns` are in `package.json` but unused. The board uses native HTML5 drag-and-drop; dates use `new Date().toLocaleDateString()`. These deps can be removed.
 
 ---
 
