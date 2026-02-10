@@ -4,13 +4,16 @@
 
 **bee-jobs** is a personal job tracking CRM with a Kanban board interface. Jobs flow through stages (Saved -> Applied -> Interviewing -> Offer -> Passed). Jobs are added manually through the UI or automatically via the BeeBot API endpoint.
 
-**Tech Stack:** Next.js 16, TypeScript 5.7, Tailwind CSS 3, Supabase (Auth + Postgres + RLS), dnd-kit, Vercel
+**Tech Stack:** Next.js 16, TypeScript 5.7, Tailwind CSS 3, Supabase (Auth + Postgres + RLS via @supabase/ssr), lucide-react (icons), Vercel
+
+> **Note:** `@dnd-kit/core`, `@dnd-kit/sortable`, and `date-fns` are in `package.json` but unused. The board uses native HTML5 drag-and-drop; dates use `new Date().toLocaleDateString()`. These deps can be removed.
 
 ---
 
 ## Project Structure
 
 ```
+app/layout.tsx        -> Root layout (metadata, viewport, global CSS)
 app/page.tsx          -> Auth gate (redirects to /dashboard or /login)
 app/login/            -> Email/password login (client-side Supabase auth)
 app/dashboard/        -> Main Kanban board (server component, auth-protected)
@@ -30,6 +33,9 @@ supabase/schema.sql   -> Full schema with RLS policies
 - **BeeBot API uses service role**: `app/api/jobs/route.ts` creates an admin Supabase client with `SUPABASE_SERVICE_ROLE_KEY` that bypasses RLS. Changes to this file require security review.
 - **Single-user assumption**: The BeeBot API picks the first user from `auth.admin.listUsers()`. This breaks if multiple users exist.
 - **No migrations directory**: Database schema is in `supabase/schema.sql` (single file). Use `/create-migration <name>` to start using incremental migrations in `supabase/migrations/`.
+- **No tests**: No test runner, test files, or test command configured. Do not attempt to run tests.
+- **Session staleness without middleware**: `lib/supabase/server.ts` silently swallows cookie-set errors with a comment suggesting middleware handles refresh -- but there is no middleware. Server component auth checks may use stale sessions.
+- **API PATCH/DELETE not scoped to user**: The PATCH and DELETE handlers in `app/api/jobs/route.ts` operate on any job by `id` without verifying user ownership. Combined with service role (RLS bypass), anyone with the API key can modify/delete any user's jobs. Currently mitigated by the single-user assumption.
 
 ---
 
@@ -73,6 +79,7 @@ git branch -d <branch>
 - Use RLS policies for all new tables
 - Include `user_id` foreign key and RLS policy for any new table
 - Use `router.refresh()` after client-side Supabase mutations to sync server state
+- Use optimistic updates with rollback on error for client-side mutations (see JobBoard.tsx pattern)
 
 ### Never Do
 - Import `SUPABASE_SERVICE_ROLE_KEY` or service role client in client components
