@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -11,6 +11,7 @@ interface AddJobModalProps {
 
 export function AddJobModal({ onClose }: AddJobModalProps) {
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     company: '',
     role: '',
@@ -21,7 +22,7 @@ export function AddJobModal({ onClose }: AddJobModalProps) {
     website: '',
     notes: '',
   })
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const router = useRouter()
 
   // Prevent body scroll when modal is open
@@ -35,20 +36,40 @@ export function AddJobModal({ onClose }: AddJobModalProps) {
     e.preventDefault()
     setLoading(true)
 
+    const trimmedData = {
+      ...formData,
+      company: formData.company.trim(),
+      role: formData.role.trim(),
+    }
+
+    if (!trimmedData.company || !trimmedData.role) {
+      setError('Company and Role are required.')
+      setLoading(false)
+      return
+    }
+
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    if (!user) {
+      setError('Your session has expired. Please log in again.')
+      setLoading(false)
+      router.push('/login')
+      return
+    }
 
     const { error } = await supabase.from('jobs').insert({
-      ...formData,
+      ...trimmedData,
       user_id: user.id,
       source: 'manual',
     })
 
-    if (!error) {
-      router.refresh()
-      onClose()
+    if (error) {
+      setError('Failed to add job. Please try again.')
+      setLoading(false)
+      return
     }
-    setLoading(false)
+
+    router.refresh()
+    onClose()
   }
 
   return (
@@ -75,6 +96,11 @@ export function AddJobModal({ onClose }: AddJobModalProps) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
+          {error && (
+            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">

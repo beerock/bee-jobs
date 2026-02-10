@@ -3,8 +3,8 @@
 import { User } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { LogOut, Plus } from 'lucide-react'
-import { useState } from 'react'
+import { LogOut, Plus, Loader2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { AddJobModal } from './AddJobModal'
 
 interface HeaderProps {
@@ -13,10 +13,12 @@ interface HeaderProps {
 
 export function Header({ user }: HeaderProps) {
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const [showAddModal, setShowAddModal] = useState(false)
+  const [signingOut, setSigningOut] = useState(false)
 
   const handleSignOut = async () => {
+    setSigningOut(true)
     await supabase.auth.signOut()
     router.push('/login')
     router.refresh()
@@ -48,10 +50,11 @@ export function Header({ user }: HeaderProps) {
 
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-1.5 text-gray-600 hover:text-gray-800 active:text-gray-900 px-2.5 sm:px-3 py-2.5 sm:py-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition min-h-[44px]"
+              disabled={signingOut}
+              className="flex items-center gap-1.5 text-gray-600 hover:text-gray-800 active:text-gray-900 px-2.5 sm:px-3 py-2.5 sm:py-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition min-h-[44px] disabled:opacity-50"
             >
-              <LogOut className="w-5 h-5 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Sign Out</span>
+              {signingOut ? <Loader2 className="w-5 h-5 sm:w-4 sm:h-4 animate-spin" /> : <LogOut className="w-5 h-5 sm:w-4 sm:h-4" />}
+              <span className="hidden sm:inline">{signingOut ? 'Signing out...' : 'Sign Out'}</span>
             </button>
           </div>
         </div>

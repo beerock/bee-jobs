@@ -19,7 +19,10 @@ app/dashboard/        -> Main Kanban board (server component, auth-protected)
 app/api/jobs/         -> BeeBot REST API (service role, Bearer token auth)
 components/           -> JobBoard, JobCard, JobDetailModal, AddJobModal, Header
 lib/supabase/         -> client.ts (browser), server.ts (server components)
+lib/supabase/middleware.ts -> Session refresh logic (used by proxy.ts)
 lib/types.ts          -> Job, Contact, Activity types + STATUS_CONFIG
+lib/url.ts            -> sanitizeUrl() — validates URLs are http/https
+proxy.ts              -> Next.js 16 proxy for Supabase session refresh
 supabase/schema.sql   -> Full schema with RLS policies
 ```
 
@@ -28,13 +31,12 @@ supabase/schema.sql   -> Full schema with RLS policies
 ## Critical Gotchas
 
 - **No server actions**: All UI mutations go through client-side Supabase (RLS-protected). There is no `app/actions/` directory.
-- **No middleware**: No `middleware.ts` exists. Session refresh relies on Supabase SSR cookie handling, not middleware interception.
+- **Session proxy**: `proxy.ts` handles session refresh via `lib/supabase/middleware.ts`. Next.js 16 uses `proxy.ts` (not `middleware.ts` — that convention is deprecated).
 - **BeeBot API uses service role**: `app/api/jobs/route.ts` creates an admin Supabase client with `SUPABASE_SERVICE_ROLE_KEY` that bypasses RLS. Changes to this file require security review.
 - **Single-user assumption**: The BeeBot API picks the first user from `auth.admin.listUsers()`. This breaks if multiple users exist.
 - **No migrations directory**: Database schema is in `supabase/schema.sql` (single file). Use `/create-migration <name>` to start using incremental migrations in `supabase/migrations/`.
 - **No tests**: No test runner, test files, or test command configured. Do not attempt to run tests.
-- **Session staleness without middleware**: `lib/supabase/server.ts` silently swallows cookie-set errors with a comment suggesting middleware handles refresh -- but there is no middleware. Server component auth checks may use stale sessions.
-- **API PATCH/DELETE not scoped to user**: The PATCH and DELETE handlers in `app/api/jobs/route.ts` operate on any job by `id` without verifying user ownership. Combined with service role (RLS bypass), anyone with the API key can modify/delete any user's jobs. Currently mitigated by the single-user assumption.
+- **No rate limiting**: The BeeBot API has no rate limiting. Consider `@upstash/ratelimit` if abuse becomes a concern.
 
 ---
 
@@ -79,6 +81,10 @@ git branch -d <branch>
 - Include `user_id` foreign key and RLS policy for any new table
 - Use `router.refresh()` after client-side Supabase mutations to sync server state
 - Use optimistic updates with rollback on error for client-side mutations (see JobBoard.tsx pattern)
+- Use `sanitizeUrl()` from `lib/url.ts` for all user-supplied URLs rendered in `href` attributes
+- Use `useMemo(() => createClient(), [])` for Supabase clients in client components
+- Use `crypto.timingSafeEqual` for secret comparisons in API routes (see `secureCompare` in route.ts)
+- Whitelist fields in API PATCH handlers — never spread raw request body into `.update()`
 
 ### Never Do
 - Import `SUPABASE_SERVICE_ROLE_KEY` or service role client in client components
@@ -86,6 +92,9 @@ git branch -d <branch>
 - Skip auth checks in server components or API routes
 - Edit `.env` files directly (blocked by PreToolUse hook)
 - Edit lock files directly (blocked by PreToolUse hook)
+- Render user-supplied URLs in `href` without passing through `sanitizeUrl()`
+- Return raw database error messages to API clients (use `sanitizeDbError()` pattern)
+- Use `!==` for API key/secret comparison (timing attack vector)
 
 ### Code Change Workflows
 
@@ -108,7 +117,7 @@ git branch -d <branch>
 ```bash
 npm run dev                     # Start dev server (localhost:3000)
 npm run build                   # Production build
-npm run lint                    # ESLint check (next lint)
+npm run lint                    # ESLint check (next lint) — fails in worktree paths with slashes
 npx tsc --noEmit                # TypeScript type check
 ```
 
