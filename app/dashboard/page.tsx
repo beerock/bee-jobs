@@ -19,7 +19,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header user={user} />
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 safe-bottom">
         <JobBoard initialJobs={jobs || []} />
       </main>
     </div>

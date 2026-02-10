@@ -33,7 +33,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-bee-50 to-bee-100">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+      <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-md mx-4 sm:mx-0">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-bee-600 mb-2">🐝 bee-jobs</h1>
           <p className="text-gray-600">Your personal job tracker</p>
@@ -56,7 +56,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none transition"
+              className="w-full px-4 py-3 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none transition text-base"
               placeholder="you@example.com"
             />
           </div>
@@ -71,7 +71,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none transition"
+              className="w-full px-4 py-3 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none transition text-base"
               placeholder="••••••••"
             />
           </div>

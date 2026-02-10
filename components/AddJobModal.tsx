@@ -45,18 +45,18 @@ export function AddJobModal({ onClose }: AddJobModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b">
+    <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 sm:p-4">
+      <div className="bg-white rounded-t-2xl sm:rounded-xl max-w-lg w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-4 border-b sticky top-0 bg-white rounded-t-2xl sm:rounded-t-xl z-10">
           <h2 className="text-lg font-semibold">Add New Job</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-2 -m-2 min-w-[44px] min-h-[44px] flex items-center justify-center">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2 sm:col-span-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Company *
               </label>
@@ -65,11 +65,11 @@ export function AddJobModal({ onClose }: AddJobModalProps) {
                 required
                 value={formData.company}
                 onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none"
+                className="w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none text-base sm:text-sm"
               />
             </div>
 
-            <div className="col-span-2 sm:col-span-1">
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Role *
               </label>
@@ -78,7 +78,7 @@ export function AddJobModal({ onClose }: AddJobModalProps) {
                 required
                 value={formData.role}
                 onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none"
+                className="w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none text-base sm:text-sm"
               />
             </div>
 
@@ -89,7 +89,7 @@ export function AddJobModal({ onClose }: AddJobModalProps) {
               <select
                 value={formData.company_stage}
                 onChange={(e) => setFormData(prev => ({ ...prev, company_stage: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none"
+                className="w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none text-base sm:text-sm"
               >
                 <option value="">Select...</option>
                 <option value="Seed">Seed</option>
@@ -111,11 +111,11 @@ export function AddJobModal({ onClose }: AddJobModalProps) {
                 value={formData.location}
                 onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
                 placeholder="Remote, NYC, etc."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none"
+                className="w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none text-base sm:text-sm"
               />
             </div>
 
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Salary Range
               </label>
@@ -124,11 +124,11 @@ export function AddJobModal({ onClose }: AddJobModalProps) {
                 value={formData.salary_range}
                 onChange={(e) => setFormData(prev => ({ ...prev, salary_range: e.target.value }))}
                 placeholder="$150k-$200k"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none"
+                className="w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none text-base sm:text-sm"
               />
             </div>
 
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Job URL
               </label>
@@ -137,11 +137,11 @@ export function AddJobModal({ onClose }: AddJobModalProps) {
                 value={formData.job_url}
                 onChange={(e) => setFormData(prev => ({ ...prev, job_url: e.target.value }))}
                 placeholder="https://..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none"
+                className="w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none text-base sm:text-sm"
               />
             </div>
 
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Notes
               </label>
@@ -149,23 +149,23 @@ export function AddJobModal({ onClose }: AddJobModalProps) {
                 value={formData.notes}
                 onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none resize-none"
+                className="w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none resize-none text-base sm:text-sm"
               />
             </div>
           </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex gap-3 pt-2 pb-safe">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+              className="flex-1 px-4 py-3 sm:py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition min-h-[44px] text-base sm:text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-bee-500 text-white rounded-lg hover:bg-bee-600 transition disabled:opacity-50"
+              className="flex-1 px-4 py-3 sm:py-2 bg-bee-500 text-white rounded-lg hover:bg-bee-600 transition disabled:opacity-50 min-h-[44px] text-base sm:text-sm"
             >
               {loading ? 'Adding...' : 'Add Job'}
             </button>

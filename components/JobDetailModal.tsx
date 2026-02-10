@@ -46,19 +46,19 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b sticky top-0 bg-white">
-          <h2 className="text-lg font-semibold truncate pr-4">{job.role}</h2>
-          <div className="flex items-center gap-2">
+    <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 sm:p-4">
+      <div className="bg-white rounded-t-2xl sm:rounded-xl max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-4 border-b sticky top-0 bg-white rounded-t-2xl sm:rounded-t-xl z-10">
+          <h2 className="text-base sm:text-lg font-semibold truncate pr-4">{job.role}</h2>
+          <div className="flex items-center gap-1">
             <button
               onClick={handleDelete}
-              className="text-red-400 hover:text-red-600 p-1"
+              className="text-red-400 hover:text-red-600 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center"
               title="Delete job"
             >
               <Trash2 className="w-5 h-5" />
             </button>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1">
+            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -98,13 +98,13 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
           </div>
 
           {/* Links */}
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             {job.job_url && (
               <a
                 href={job.job_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-bee-600 hover:text-bee-700 text-sm"
+                className="flex items-center gap-1.5 text-bee-600 hover:text-bee-700 text-sm px-3 py-2 bg-bee-50 rounded-lg min-h-[44px]"
               >
                 <ExternalLink className="w-4 h-4" />
                 Job Posting
@@ -115,7 +115,7 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
                 href={job.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-bee-600 hover:text-bee-700 text-sm"
+                className="flex items-center gap-1.5 text-bee-600 hover:text-bee-700 text-sm px-3 py-2 bg-bee-50 rounded-lg min-h-[44px]"
               >
                 <ExternalLink className="w-4 h-4" />
                 Company Website
@@ -126,7 +126,7 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
                 href={job.careers_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-bee-600 hover:text-bee-700 text-sm"
+                className="flex items-center gap-1.5 text-bee-600 hover:text-bee-700 text-sm px-3 py-2 bg-bee-50 rounded-lg min-h-[44px]"
               >
                 <ExternalLink className="w-4 h-4" />
                 Careers Page
@@ -155,7 +155,7 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
                       ? new Date().toISOString() 
                       : job.applied_at
                   })}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
+                  className={`px-3 py-2.5 sm:py-1.5 rounded-lg text-sm font-medium transition min-h-[44px] ${
                     job.status === status
                       ? STATUS_CONFIG[status].color + ' ring-2 ring-offset-1 ring-gray-300'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -172,7 +172,7 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
             <h3 className="font-medium text-gray-700 mb-2">Interest Level</h3>
             <button
               onClick={toggleInterested}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${
+              className={`flex items-center gap-2 px-4 py-3 sm:py-2 rounded-lg transition min-h-[44px] ${
                 job.interested === true
                   ? 'bg-bee-100 text-bee-700'
                   : job.interested === false
@@ -212,7 +212,7 @@ export function JobDetailModal({ job: initialJob, onClose }: JobDetailModalProps
               }}
               rows={4}
               placeholder="Add your notes here..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none resize-none"
+              className="w-full px-3 py-3 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bee-500 focus:border-transparent outline-none resize-none text-base sm:text-sm"
             />
           </div>
 

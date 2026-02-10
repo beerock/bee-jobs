@@ -20,41 +20,43 @@ export function JobCard({ job, onDragStart, isDragging }: JobCardProps) {
         draggable
         onDragStart={onDragStart}
         onClick={() => setShowDetail(true)}
-        className={`bg-white rounded-lg border border-gray-200 p-4 cursor-pointer hover:shadow-md transition ${
+        className={`bg-white rounded-xl border border-gray-200 p-4 cursor-pointer 
+          hover:shadow-md active:shadow-md active:scale-[0.98] 
+          transition-all duration-150 ${
           isDragging ? 'opacity-50 scale-95' : ''
         }`}
       >
-        <div className="flex items-start justify-between mb-2">
-          <h3 className="font-semibold text-gray-900 line-clamp-1">{job.role}</h3>
+        <div className="flex items-start justify-between mb-2 gap-2">
+          <h3 className="font-semibold text-gray-900 text-[15px] sm:text-base leading-snug line-clamp-2">{job.role}</h3>
           {job.interested !== null && (
             job.interested ? (
-              <Star className="w-4 h-4 text-bee-500 fill-bee-500 flex-shrink-0" />
+              <Star className="w-5 h-5 text-bee-500 fill-bee-500 flex-shrink-0 mt-0.5" />
             ) : (
-              <StarOff className="w-4 h-4 text-gray-300 flex-shrink-0" />
+              <StarOff className="w-5 h-5 text-gray-300 flex-shrink-0 mt-0.5" />
             )
           )}
         </div>
 
-        <div className="flex items-center gap-1 text-gray-600 mb-2">
+        <div className="flex items-center gap-1.5 text-gray-600 mb-2">
           <Building2 className="w-4 h-4 flex-shrink-0" />
           <span className="text-sm truncate">{job.company}</span>
           {job.company_stage && (
-            <span className="text-xs bg-gray-100 px-2 py-0.5 rounded ml-1">
+            <span className="text-xs bg-gray-100 px-2 py-0.5 rounded ml-1 flex-shrink-0">
               {job.company_stage}
             </span>
           )}
         </div>
 
         {job.location && (
-          <div className="flex items-center gap-1 text-gray-500 text-sm mb-2">
-            <MapPin className="w-3 h-3" />
+          <div className="flex items-center gap-1.5 text-gray-500 text-sm mb-2">
+            <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
             <span className="truncate">{job.location}</span>
           </div>
         )}
 
         {job.salary_range && (
-          <div className="flex items-center gap-1 text-green-600 text-sm mb-2">
-            <DollarSign className="w-3 h-3" />
+          <div className="flex items-center gap-1.5 text-green-600 text-sm mb-2">
+            <DollarSign className="w-3.5 h-3.5 flex-shrink-0" />
             <span>{job.salary_range}</span>
           </div>
         )}
@@ -75,7 +77,7 @@ export function JobCard({ job, onDragStart, isDragging }: JobCardProps) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-bee-500 hover:text-bee-600"
+              className="text-bee-500 hover:text-bee-600 active:text-bee-700 p-2.5 -m-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg"
             >
               <ExternalLink className="w-4 h-4" />
             </a>
