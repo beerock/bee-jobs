@@ -6,7 +6,6 @@
 
 **Tech Stack:** Next.js 16, TypeScript 5.7, Tailwind CSS 3, Supabase (Auth + Postgres + RLS via @supabase/ssr), lucide-react (icons), Vercel
 
-
 ---
 
 ## Project Structure
@@ -24,7 +23,15 @@ lib/types.ts          -> Job, Contact, Activity types + STATUS_CONFIG
 lib/url.ts            -> sanitizeUrl() — validates URLs are http/https
 proxy.ts              -> Next.js 16 proxy for Supabase session refresh
 supabase/schema.sql   -> Full schema with RLS policies
+.claude/              -> Hooks, agents, and skills
 ```
+
+### Claude Code Customizations
+- **`/audit`**, **`/doc-sync`**, **`/ship`** — global skills in `~/.claude/skills/`
+- **`/create-migration`** — project-specific skill for Supabase migrations
+- Skills are prompt templates (SKILL.md files), not callable functions
+- **PreToolUse hooks**: Block `.env` and lock file edits
+- **PostToolUse hooks**: Auto-lint, auto-typecheck, main-branch warning on Edit/Write
 
 ---
 
@@ -47,33 +54,13 @@ supabase/schema.sql   -> Full schema with RLS policies
 **At the start of EVERY new session**, before making any file changes:
 
 1. **Detect environment** using `git worktree list` and `git branch --show-current`
+2. **If on `main`:** STOP, alert user, suggest worktree or branch
+3. **If in a worktree:** Confirm and proceed
+4. **Once confirmed:** No further prompting needed
 
-2. **If on `main` in the main repo:**
-   - STOP and alert the user
-   - Show existing worktrees: `git worktree list`
-   - Ask: "Do you need a worktree for this task, or is a branch sufficient?"
-     - **Worktree:** Run auto-setup (below), continue in same session with absolute paths
-     - **Branch only:** `git checkout -b <branch>` for lightweight tasks
-     - **Main (emergency only):** Requires explicit confirmation
+**Worktree paths:** `../bee-jobs-worktrees/<branch-name>`
 
-3. **If in a worktree:** Show branch, ask to continue or switch
-
-4. **Once confirmed:** Proceed without re-prompting
-
-**Worktree Auto-Setup:**
-```bash
-MAIN_REPO=$(pwd)
-git worktree add ../bee-jobs-worktrees/<branch> -b <branch>
-cd ../bee-jobs-worktrees/<branch>
-npm install
-cp "$MAIN_REPO/.env.local" .env.local
-```
-
-**Cleanup** (after merging, from main repo):
-```bash
-git worktree remove ../bee-jobs-worktrees/<branch>
-git branch -d <branch>
-```
+See `~/.claude/CLAUDE.md` for full worktree conventions (auto-setup, cleanup, mid-session migration).
 
 ### Always Do
 - Validate auth in server components before rendering protected data
@@ -133,4 +120,4 @@ See `.env.example` for full template.
 
 ---
 
-*Last Updated: February 10, 2026*
+*Last Updated: February 13, 2026*
