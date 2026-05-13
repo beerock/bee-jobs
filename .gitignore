@@ -46,3 +46,6 @@ tmpclaude*
 # Windows
 Thumbs.db
 nul
+
+# MCP
+.mcp.json
