@@ -74,6 +74,7 @@ See `~/.claude/CLAUDE.md` for full worktree conventions (auto-setup, cleanup, mi
 - Whitelist fields in API PATCH handlers — never spread raw request body into `.update()`
 
 ### Never Do
+- Commit `.mcp.json` — gitignored intentionally; it contains the Supabase project ref
 - Import `SUPABASE_SERVICE_ROLE_KEY` or service role client in client components
 - Use raw HTML injection with user-supplied content
 - Skip auth checks in server components or API routes
@@ -120,4 +121,4 @@ See `.env.example` for full template.
 
 ---
 
-*Last Updated: February 13, 2026*
+*Last Updated: May 13, 2026*
